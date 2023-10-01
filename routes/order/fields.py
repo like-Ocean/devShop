@@ -5,3 +5,7 @@ make_order_model = {
     'address': fields.String(required=True),
     'products_id': fields.List(fields.Nested({'product_id': fields.Integer(required=True), 'count': fields.Integer(required=True)}))
 }
+
+delete_order_model = {
+    'order_id': fields.Integer(required=True)
+}

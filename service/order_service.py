@@ -1,10 +1,11 @@
 import datetime
 from models import Order, OrderItem, Product, User
 
-ORDER_STATUS = ['IN_PROCESSING', 'ACCEPTED_FOR_EXECUTION', 'SENT']
+ORDER_STATUS = ['IN_PROCESSING', 'ACCEPTED_FOR_EXECUTION', 'SENT', 'ORDER_RECEIVED']
 
 
 # возможно нужно будет чуть переписать, чтобы товары добавлялись тут, а адресс и дата в другой функции
+# сделать вычет из product.total_count - product_id['count'].(уменьшение товара крч)
 def make_order(user_id: int, address: str, products_id: list):
     customer = User.get_or_none(id=user_id)
     if not customer:
@@ -50,5 +51,10 @@ def get_order_info(order_id: int):
 
 
 def delete_order(order_id: int):
-    pass
+    order = Order.get_or_none(id=order_id)
+    if not order:
+        return 'Order not found'
 
+    if order.status == 'ORDER_RECEIVED' or 'IN_PROCESSING':
+        Order.delete().where(Order.id == order_id).execute()
+        return 204

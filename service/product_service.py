@@ -21,7 +21,7 @@ def remove_category(category_id: int):
     if not category:
         return 'Category not found', 401
     Category.delete().where(Category.id == category_id).execute()
-    return 200
+    return 204
 
 
 def get_categories():
@@ -119,7 +119,7 @@ def remove_product(product_id: int):
     Product.delete().where(Product.id == product_id).execute()
     ProductImg.delete().where(ProductImg.product == product_id).execute()
 
-    return 200
+    return 204
 
 
 def get_in_category_products(category_id: int):
@@ -172,4 +172,4 @@ def remove_product_img(img_id: int):
         return 'Image not found'
     os.remove(img.url)
     ProductImg.delete().where(ProductImg.id == img_id).execute()
-    return 200
+    return 204
