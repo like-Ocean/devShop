@@ -1,8 +1,10 @@
 import datetime
-
 from models import Order, OrderItem, Product, User
 
+ORDER_STATUS = ['IN_PROCESSING', 'ACCEPTED_FOR_EXECUTION', 'SENT']
 
+
+# возможно нужно будет чуть переписать, чтобы товары добавлялись тут, а адресс и дата в другой функции
 def make_order(user_id: int, address: str, products_id: list):
     customer = User.get_or_none(id=user_id)
     if not customer:
@@ -12,7 +14,7 @@ def make_order(user_id: int, address: str, products_id: list):
         user=customer,
         order_date=datetime.date.today(),
         address=address,
-        status='Order in process'
+        status='IN_PROCESSING'
     )
 
     for product_id in products_id:
@@ -26,12 +28,25 @@ def make_order(user_id: int, address: str, products_id: list):
     return order.get_dto()
 
 
-def get_orders_info():
+def change_order(order_id: int):
     pass
+
+
+def get_orders_info():
+    orders = Order.select()
+    return [order.get_dto() for order in orders]
 
 
 def get_order_info(order_id: int):
-    pass
+    order = Order.get_or_none(id=order_id)
+    if not order:
+        return 'Order not found'
+
+    products = OrderItem.select().where(OrderItem.order == order_id)
+    if not products:
+        return 'Products not found'
+
+    return [product.get_dto() for product in products]
 
 
 def delete_order(order_id: int):

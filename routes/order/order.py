@@ -16,3 +16,10 @@ def make_order():
     return jsonify(order)
 
 
+@order_router.get('/order/<order_id>/')
+@login_required
+def get_order_info(order_id):
+    order = order_service.get_order_info(order_id)
+    return jsonify(order)
+
+
