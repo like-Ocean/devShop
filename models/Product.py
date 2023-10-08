@@ -11,7 +11,7 @@ class Product(BaseModel):
     price = FloatField(null=False)
     discount = IntegerField(null=True)
     final_price = FloatField(null=True)
-    total_count = IntegerField(null=False, constraints=[Check('count >= 0')])
+    total_count = IntegerField(null=False, constraints=[Check('total_count >= 0')])
 
     def get_dto(self):
         return {
