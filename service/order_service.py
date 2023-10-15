@@ -4,7 +4,6 @@ from models import Order, OrderItem, Product, User
 ORDER_STATUS = ['IN_PROCESSING', 'ACCEPTED_FOR_EXECUTION', 'SENT', 'ORDER_RECEIVED']
 
 
-# возможно нужно будет чуть переписать, чтобы товары добавлялись тут, а адресс и дата в другой функции
 def check_products_availability(products_id: list):
     for product_id in products_id:
         product = Product.get_or_none(Product.id == product_id['product_id'])
@@ -50,8 +49,11 @@ def make_order(user_id: int, address: str, products_id: list):
     return order.get_dto()
 
 
-# написать роут и протестировать
-def change_order(order_id: int, new_address: str, products_id: list):
+def change_order(user_id: int, order_id: int, new_address: str, products_id: list):
+    user = User.get_or_none(id=user_id)
+    if not user:
+        return 'User not found'
+
     order = Order.get_or_none(Order.id == order_id)
     if not order:
         return 'Order not found'
@@ -72,6 +74,14 @@ def change_order(order_id: int, new_address: str, products_id: list):
         )
         if not order_item:
             return f'Product {product_id["product_id"]} not found in the order'
+
+        if product_id['count'] < order_item.count:
+            product = Product.get_or_none(Product.id == product_id['product_id'])
+            product.total_count += order_item.count - product_id['count']
+            product.save()
+
+        order_item.count = product_id['count']
+        order_item.save()
 
         product_reduction(product_id['product_id'], product_id['count'])
 

@@ -17,6 +17,7 @@ def registration():
     return jsonify(user)
 
 
+# мб нужно переписать
 @user_router.post('/user/authorization')
 def auth():
     data = flaskparser.parser.parse(authorization_model, request)
